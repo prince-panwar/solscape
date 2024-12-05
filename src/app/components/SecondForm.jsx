@@ -74,13 +74,14 @@ const SecondSec = () => {
                 {/* Your existing structure */}
                 <div className="form-1 f">
                     <div className="input-cont">
-                        <div className="input first">
-                            <img src="./assets/images/Button-info.png" alt="" />
+                        <div className="input first solbtn">
+                           
                             <div className="inner-cont">
                                 <img src="./assets/images/Sol.png" alt="" />
                                 <h1>Solana</h1>
                             </div>
                         </div>
+                        
                             <WalletMultiButton/>
                         
                     </div>

@@ -310,7 +310,7 @@ button {
 
     .input-cont {
         display: flex;
-        gap: 21px;
+        gap: 50px;
     }
 
     .input {
@@ -337,6 +337,7 @@ button {
     .inner-cont {
         display: flex;
         align-items: center;
+        justify-content: center;
         column-gap: 10px;
         position: absolute;
         top: 50%;
@@ -1106,7 +1107,7 @@ button {
     }
 }
   
-.wallet-adapter-button {
+.wallet-adapter-button  {
     all: unset;
     background-color: #3E3529; /* Background color */
     width: 160px; /* Default button width */
@@ -1156,4 +1157,25 @@ button {
     width: 98%;
     padding: 10px;
     border-radius: 5px;
+}
+
+.solbtn{
+    all: unset;
+    background-color: #3E3529; /* Background color */
+    width: 160px; /* Default button width */
+    height: 65px; /* Default button height */
+    display: flex; /* Enable Flexbox for centering */
+    align-items: center; /* Center content vertically */
+    justify-content: center; /* Center content horizontally */
+    text-align: center; /* Ensure multi-line text is centered */
+    color: #ffffff; /* Text color */
+    font-family: 'RuneScapeBold', sans-serif; /* Match theme font */
+    font-size: 18px; /* Font size for text */
+    border: 2px solid #554F44; /* Add border */
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer; /* Change cursor to pointer for buttons */
+   
+    box-sizing: border-box; /* Include border in width/height calculations */
+    transition: all 0.3s ease; 
+
 }
