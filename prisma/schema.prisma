@@ -32,7 +32,7 @@ model tbl_deposit {
   username   String
   amount     Float
   claim      Boolean
-  address    String     @db.VarChar(42)
+  address    String     @db.VarChar(44)
   userId     BigInt
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -50,7 +50,7 @@ export default function Home() {
         </div>
         <div className="main-cont">
           {
-          (username ? 
+          (!username ? 
           (  
             <Form />
           ):(

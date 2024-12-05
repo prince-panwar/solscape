@@ -1,55 +1,73 @@
-import prisma from "../../../../utils/prisma";
-
-const json = (param) => {
-  return JSON.stringify(
-    param,
-    (key, value) => (typeof value === "bigint" ? value.toString() : value) // Convert BigInt to string
-  );
-};
-
 export async function POST(request) {
   try {
-    // Parse the JSON body from the request
     const body = await request.json();
-    const { username, amount, claim, address, userId } = body;
+    console.log("Incoming request body:", body);
 
-    // Validate the input
-    if (!username || amount == null || claim == null || !address || !userId) {
+    if (!body) {
       return new Response(
-        JSON.stringify({ error: "All fields are required" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+        JSON.stringify({ error: "Request body cannot be null" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Insert the deposit into the database
+    const { username, amount, address, id } = body;
+
+    // Validate inputs
+    if (!username || amount == null || !address || !id) {
+      return new Response(
+        JSON.stringify({
+          error: "All fields are required",
+        }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate userId
+    const user = await prisma.user.findUnique({
+      where: { id: BigInt(id) },
+    });
+
+    if (!user) {
+      console.error("User not found for userId:", id);
+      return new Response(
+        JSON.stringify({ error: "Invalid userId. User does not exist." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Insert into the database
     const newDeposit = await prisma.tbl_deposit.create({
       data: {
         username,
         amount,
-        claim,
         address,
-        userId: BigInt(userId),
+        claim: false,
+        userId: BigInt(id),
       },
     });
 
-    // Return the created deposit as JSON
-    return new Response(json(newDeposit), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    });
+    // Serialize BigInt fields before returning the response
+    return new Response(
+      JSON.stringify({
+        ...newDeposit,
+        id: newDeposit.id.toString(),
+        userId: newDeposit.userId.toString(),
+      }),
+      {
+        status: 201,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     console.error("Error adding deposit:", error);
 
-    // Handle internal server errors
     return new Response(
-      JSON.stringify({ error: "Internal Server Error" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+      JSON.stringify({
+        error: "Internal Server Error",
+        message: error.message,
+        stack: error.stack,
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }
