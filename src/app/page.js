@@ -1,7 +1,11 @@
+'use client'
 import Image from "next/image";
 import Form from "./components/Form";
+import SecondSec from "./components/SecondForm";
 import Link from "next/link";
+import { useUserContext } from "../../context/userContext";
 export default function Home() {
+  const {username} = useUserContext();
   return (
     <> 
     <div className="container">
@@ -45,7 +49,14 @@ export default function Home() {
             </div>
         </div>
         <div className="main-cont">
-        <Form />
+          {
+          (username ? 
+          (  
+            <Form />
+          ):(
+            <SecondSec />
+          ))}
+      
         </div>
         <footer className="footer">
             <ul>

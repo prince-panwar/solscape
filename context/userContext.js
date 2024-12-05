@@ -15,7 +15,7 @@ export const UserProvider = ({ children }) => {
   const verifyUser = async (username) => {
     try {
       console.log("Verifying username:", username);
-      setUsername(username);
+     
   
       // Fetch user verification from API
       const res = await axios.get("/api/userVerification", {
@@ -27,6 +27,7 @@ export const UserProvider = ({ children }) => {
       if (data.length > 0) {
         // Assuming the ID is returned as a string from your API
         setId(BigInt(data[0].id));
+        setUsername(username);
         console.log("User exists with ID:", BigInt(data[0].id));
       } else {
         console.log("User not found. Adding new user...");
@@ -40,6 +41,7 @@ export const UserProvider = ({ children }) => {
   
         // Set the ID of the newly created user
         setId(BigInt(newUser.id));
+        setUsername(username);
         console.log("New user ID:", BigInt(newUser.id));
       }
     } catch (error) {
