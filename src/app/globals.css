@@ -686,12 +686,13 @@ button {
 }
 
 /* --------------Responsive-------------- */
-
-@media (max-width: 1200px) {
-    /* .popup {
-        top: 20%;
-    } */
+@media (min-width: 1280px) {
+    .container{
+        max-width: 1480px;
+    }
+    
 }
+
 @media (max-width: 1100px) {
     .logo {
         width: 200px;
