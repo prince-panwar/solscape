@@ -9,6 +9,7 @@ import {
   import {
     getAssociatedTokenAddress,
     createTransferInstruction,
+    getAccount,
   } from "@solana/spl-token";
 import axios from 'axios';
 const SecondSec = () => {
@@ -18,9 +19,10 @@ const SecondSec = () => {
     const [showFailedPopup, setShowFailedPopup] = useState(false); // Result popup state
     const [depositResult, setDepositResult] = useState(''); // Success or failure result
     const [depositAmount, setDepositAmount] = useState(0); // Deposit amount
+    const [totalDeposit, setTotalDeposit] = useState(0); // Total deposited amount
     const { publicKey, sendTransaction } = useWallet();
     const [showProcessingPopup, setShowProcessingPopup] = useState(false);
-
+    const [userBalance , setUserBalance] = useState(0);
     const {username,id} = useUserContext();
     const [data, setData] = useState([]); // Deposit data
     const TOKEN_MINT_ADDRESS = "GykqHYHrB6STA6FzFNVX23xTqtXLd2hrKbaRSqJk2DaB";
@@ -38,7 +40,7 @@ const SecondSec = () => {
         try {
           const response = await axios.get("/api/getDeposit"); // Replace with your correct API endpoint
           setData(response.data); // Set fetched data to the state
-          console.log("Deposits fetched:", response.data);
+          
         } catch (error) {
           console.error("Error fetching deposits:", error.response ? error.response.data : error.message);
         }
@@ -46,11 +48,75 @@ const SecondSec = () => {
     
       
       useEffect(() => {
+        // Fetch deposits immediately
+        getDeposits();
+        fetchSenderTokenBalance();
+        fetchTotalDeposited();
+        // Set an interval to fetch deposits every 10 seconds
         const interval = setInterval(() => {
-          getDeposits(); // Fetch deposits every second
+          getDeposits();
+          fetchSenderTokenBalance();
+            fetchTotalDeposited();
         }, 10000);
-    },[])
-    
+      
+        // Cleanup the interval when the component is unmounted
+        return () => clearInterval(interval);
+      }, []);
+      
+      const fetchSenderTokenBalance = async () => {
+        try {
+          if (!publicKey) {
+            throw new Error("Wallet not connected");
+          }
+      
+          // Parse the token mint address
+          const tokenMint = new PublicKey(TOKEN_MINT_ADDRESS);
+      
+          // Get the sender's associated token account
+          const senderTokenAccount = await getAssociatedTokenAddress(tokenMint, publicKey);
+      
+          // Fetch account details
+          const tokenAccount = await getAccount(connection, senderTokenAccount);
+      
+          // Return the balance (amount is in smallest unit of the token)
+          const balance = tokenAccount.amount; // Balance is a BigInt
+          const decimals = 9; // Replace with the actual decimals of your token
+         const readableBalance = Number(balance) / 10 ** decimals;
+         setUserBalance(readableBalance);
+         console.log(`Token balance: ${balance}`);
+          return balance;
+        } catch (error) {
+          console.error("Failed to fetch token balance:", error);
+          throw error;
+        }
+      };
+      const fetchTotalDeposited = async () => {
+        try {
+          if (!publicKey) {
+            throw new Error("Wallet not connected");
+          }
+      
+          // Parse the token mint address
+          const tokenMint = new PublicKey(TOKEN_MINT_ADDRESS);
+          const recipientPublicKey = new PublicKey(RECIPIENT_ADDRESS);
+          // Get the sender's associated token account
+          const reciverTokenAccount = await getAssociatedTokenAddress(tokenMint, recipientPublicKey);
+      
+          // Fetch account details
+          const tokenAccount = await getAccount(connection, reciverTokenAccount);
+      
+          // Return the balance (amount is in smallest unit of the token)
+          const balance = tokenAccount.amount; // Balance is a BigInt
+          const decimals = 9; // Replace with the actual decimals of your token
+         const readableBalance = Number(balance) / 10 ** decimals;
+         setTotalDeposit(readableBalance);
+         console.log(`Token balance: ${balance}`);
+          return balance;
+        } catch (error) {
+          console.error("Failed to fetch token balance:", error);
+          throw error;
+        }
+      };
 
     useEffect(() => {
         const isMobile = window.matchMedia("(max-width: 768px)").matches; // Check if it's a mobile screen
@@ -214,11 +280,12 @@ const SecondSec = () => {
                     <div className="balance-cont">
                         <div className="i-cont b-1">
                             <h1>Balance</h1>
-                            <h2>1000$ scape</h2>
+                            <h2>{`${(userBalance).toString().slice(0,13)}$ scape`}</h2>
+
                         </div>
                         <div className="i-cont b-2">
                             <h1>Total Deposited</h1>
-                            <h2>0$ scape</h2>
+                            <h2>{`${(totalDeposit).toString().slice(0,13)}$ scape`}</h2>
                         </div>
                     </div>
                     <div className="f-cont">
@@ -229,11 +296,15 @@ const SecondSec = () => {
                                 placeholder="Enter amount to deposit"
                                 onChange={(e) => {
                                     // Extract the input value
-                                    const value = e.target.value;
-                                
+                                    let value = e.target.value;
+
                                     // Validate that the input is a number (or empty for clearing)
                                     if (!isNaN(value) && /^[0-9]*$/.test(value)) {
-                                      setDepositAmount(value); // Update the state if it's a valid number
+                                      // If the value is "0", replace it with the new input
+                                      if (depositAmount === "0") {
+                                        value = value.replace(/^0+/, ""); // Remove leading zeros
+                                      }
+                                      setDepositAmount(value); 
                                     }
                                   }}
                                 inputMode="numeric" // Optimizes keyboard for mobile devices
