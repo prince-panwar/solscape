@@ -1,18 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { useUserContext } from '../../../context/userContext';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useConnection,useWallet } from '@solana/wallet-adapter-react';
+import {
+    PublicKey,
+    Transaction,
+  } from "@solana/web3.js";
+  import {
+    getAssociatedTokenAddress,
+    createTransferInstruction,
+  } from "@solana/spl-token";
 import axios from 'axios';
 const SecondSec = () => {
+    const { connection } = useConnection();
     const [showPopup, setShowPopup] = useState(false); // Popup state
     const [showResultPopup, setShowResultPopup] = useState(false); // Result popup state
     const [showFailedPopup, setShowFailedPopup] = useState(false); // Result popup state
     const [depositResult, setDepositResult] = useState(''); // Success or failure result
     const [depositAmount, setDepositAmount] = useState(0); // Deposit amount
-    const {publicKey} = useWallet();
+    const { publicKey, sendTransaction } = useWallet();
+    const [showProcessingPopup, setShowProcessingPopup] = useState(false);
+
     const {username,id} = useUserContext();
-    
     const [data, setData] = useState([]); // Deposit data
+    const TOKEN_MINT_ADDRESS = "GykqHYHrB6STA6FzFNVX23xTqtXLd2hrKbaRSqJk2DaB";
+    const RECIPIENT_ADDRESS = "2Xr97rSXucKqxxBo9GMrY6Av8W4no1sWibUEmUkBhZ2x"; 
+
+
+
+
+
+
+
+
 
     const getDeposits = async () => {
         try {
@@ -65,47 +85,108 @@ const SecondSec = () => {
         setShowPopup(true); // Show confirmation popup
     };
 
-
-
-
-    const handleConfirmDeposit = async () => {
+    const handletokenTransfer = async () => {
+        if (!publicKey) {
+          alert("Please connect your wallet first!");
+          return;
+        }
+        console.log("Public Key:", publicKey.toString());
+        setShowProcessingPopup(true);
         try {
-          // Validate inputs
-          if (!username || !depositAmount || !publicKey || !id) {
-            console.error("Missing required inputs for deposit");
-            setDepositResult("Failed");
-            setShowPopup(false);
-            setShowFailedPopup(true);
-            return;
-          }
+          // Parse inputs
+          const recipientPubkey = new PublicKey(RECIPIENT_ADDRESS);
+          const tokenMint = new PublicKey(TOKEN_MINT_ADDRESS);
+          const lamports = Math.floor(Number(depositAmount) * 10 ** 9); // Adjust based on decimals
+          console.log("Recipient Address:", recipientPubkey.toString());
       
-          // Prepare request body
-          const body = {
-            username,
-            amount: parseFloat(depositAmount),
-            address: publicKey.toString(),
-            id: id.toString(), // Convert BigInt to string
-          };
+          // Get the sender's associated token account
+          const senderTokenAccount = await getAssociatedTokenAddress(tokenMint, publicKey);
+          console.log("Sender Token Account:", senderTokenAccount.toString());
       
-          console.log("Sending request:", body);
+          // Get the recipient's associated token account
+          const recipientTokenAccount = await getAssociatedTokenAddress(tokenMint, recipientPubkey);
       
-          // API request
-          const res = await axios.post('/api/deposit', body);
-      
-          console.log("Deposit successful:", res.data);
-          setDepositResult("Success");
-          setShowPopup(false);
-          setShowResultPopup(true);
-        } catch (err) {
-          console.error(
-            "Error making deposit:",
-            err.response ? err.response.data : err.message
+          // Create the transfer instruction
+          const transferInstruction = createTransferInstruction(
+            senderTokenAccount, // Sender's token account
+            recipientTokenAccount, // Recipient's token account
+            publicKey, // Owner of the sender's token account
+            lamports // Amount to transfer (in smallest unit of the token)
           );
+      
+          // Create the transaction
+          const transaction = new Transaction().add(transferInstruction);
+      
+          // Get the latest blockhash for the transaction
+          const { blockhash } = await connection.getLatestBlockhash();
+          transaction.recentBlockhash = blockhash;
+          transaction.feePayer = publicKey;
+      
+          // Sign and send the transaction
+          const signature = await sendTransaction(transaction, connection);
+          console.log("Transaction Signature:", signature);
+      
+          const latestBlockHash = await connection.getLatestBlockhash();
+
+            await connection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: signature,
+            },"finalized"
+        );
+        await handleConfirmDeposit();
+        } catch (error) {
+          console.error("Transaction failed:", error);
           setDepositResult("Failed");
           setShowPopup(false);
+          setShowProcessingPopup(false);
           setShowFailedPopup(true);
         }
       };
+      
+      
+
+
+   const handleConfirmDeposit = async () => {
+    try {
+      // Validate inputs
+      if (!username || !depositAmount || !publicKey || !id) {
+        console.error("Missing required inputs for deposit");
+        setDepositResult("Failed");
+        setShowPopup(false);
+        setShowFailedPopup(true);
+        return;
+      }
+  
+      // Prepare request body for database update
+      const body = {
+        username,
+        amount: parseFloat(depositAmount),
+        address: publicKey.toString(),
+        id: id.toString(), // Convert BigInt to string
+      };
+  
+      // After successful transfer, update the database
+      console.log("Sending deposit request to API:", body);
+      const res = await axios.post('/api/deposit', body);
+  
+      console.log("Deposit successful:", res.data);
+      setDepositResult("Success");
+      setShowPopup(false);
+      setShowProcessingPopup(false);
+      setShowResultPopup(true);
+    } catch (err) {
+      console.error(
+        "Error during deposit process:",
+        err.response ? err.response.data : err.message
+      );
+      setDepositResult("Failed");
+      setShowPopup(false);
+      setShowProcessingPopup(false);
+      setShowFailedPopup(true);
+    }
+  };
+  
       
     
     
@@ -197,7 +278,7 @@ const SecondSec = () => {
                     <div className="popup-content">
                         <h2>`Do you want to deposit ${depositAmount} $scape?`</h2>
                         <div className="popBtn-cont">
-                            <div className="p-btn yes" onClick={handleConfirmDeposit}>
+                            <div className="p-btn yes" onClick={handletokenTransfer}>
                                 <img src="./assets/images/Button.png" alt="" />
                                 <button className='confirm'>Yes</button>
                             </div>
@@ -209,6 +290,19 @@ const SecondSec = () => {
                     </div>
                 </div>
             )}
+            
+            {/* Processing Popup */}
+            {showProcessingPopup && (
+                <div className="popup">
+                    <div className="popup-content">
+                        <h2>Transaction is Processing...</h2>
+                        <div className="loader-container">
+                            <div className="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
 
             {/* Result Popup */}
             {showResultPopup && (
