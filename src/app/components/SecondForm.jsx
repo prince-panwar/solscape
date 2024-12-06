@@ -48,20 +48,26 @@ const SecondSec = () => {
     
       
       useEffect(() => {
-        // Fetch deposits immediately
+        if (!publicKey) {
+          // Wallet not connected, do nothing
+          return;
+        }
+      
+        // Wallet connected, fetch data
         getDeposits();
         fetchSenderTokenBalance();
         fetchTotalDeposited();
-        // Set an interval to fetch deposits every 10 seconds
+      
+        // Set an interval to fetch data every 10 seconds
         const interval = setInterval(() => {
           getDeposits();
           fetchSenderTokenBalance();
-            fetchTotalDeposited();
+          fetchTotalDeposited();
         }, 10000);
       
-        // Cleanup the interval when the component is unmounted
+        // Cleanup the interval when the component is unmounted or wallet disconnects
         return () => clearInterval(interval);
-      }, []);
+      }, [publicKey]); 
       
       const fetchSenderTokenBalance = async () => {
         try {
