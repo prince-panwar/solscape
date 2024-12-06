@@ -686,7 +686,13 @@ button {
 }
 
 /* --------------Responsive-------------- */
-@media (min-width: 1280px) {
+
+@media (min-width: 1556px) {
+    .container{
+        max-width: 1920px;
+    }
+}
+@media (min-width: 1280px)and (max-width: 1556px) {
     .container{
         max-width: 1480px;
     }
