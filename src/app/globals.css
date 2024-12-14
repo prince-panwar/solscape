@@ -960,26 +960,26 @@ button {
     }
 
     .footer {
-        width: 100%; /* Make the footer take full width of the screen */
-        padding: 0 15px; /* Add some horizontal padding for spacing */
-    
-        ul {
-            display: grid;
-            grid-template-columns: 1fr; /* Stack items vertically */
-            justify-items: center; /* Center items horizontally within the grid */
-    
-            li {
-                margin-right: 0; /* Remove right margin for a cleaner layout */
-                padding: 10px 0; /* Add consistent padding for spacing */
-    
-                a {
-                    font-size: 18px; /* Adjust font size for better readability on smaller screens */
-                    text-align: center; /* Center align text inside each link */
-                }
+    width: 100%; /* Make the footer take full width of the screen */
+    padding: 0 15px; /* Add some horizontal padding for spacing */
+
+    ul {
+        display: grid;
+        grid-template-columns: 1fr; /* Stack items vertically */
+        justify-items: center; /* Center items horizontally within the grid */
+
+        li {
+            margin-right: 0; /* Remove right margin for a cleaner layout */
+            padding: 10px 0; /* Add consistent padding for spacing */
+
+            a {
+                font-size: 18px; /* Adjust font size for better readability on smaller screens */
+                text-align: center; /* Center align text inside each link */
             }
         }
     }
-    
+}
+
 }
 
 @media (max-width: 480px) {
