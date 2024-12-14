@@ -23,9 +23,12 @@ export default function Home() {
     </div>
 
     <div className="main">
-        <div className="logo">
-            <img src="./assets/images/SOLSCAPE.png" alt="" />
-        </div>
+    <div className="logo">
+    <a href="/"> {/* Link to the home page */}
+        <img src="./assets/images/SOLSCAPE.png" alt="Logo" />
+    </a>
+</div>
+
         <div className="nav">
             <ul className="nav-list">
                 <li className="nav-item">
