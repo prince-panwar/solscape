@@ -70,7 +70,7 @@ export default function Home() {
                 </li>
                 <li>
                     <img src="./assets/images/Discord.png" alt="" />
-                    <a href="">Discord</a>
+                    <a href="https://discord.com/invite/solscape">Discord</a>
                 </li>
                 <li>
                     <img src="./assets/images/Wiki.png" alt="" style={{width: '20px', height: '28px', objectFit: 'cover'}} />
