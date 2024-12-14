@@ -24,7 +24,7 @@ export default function Home() {
 
     <div className="main">
     <div className="logo">
-    <a href="/"> {/* Link to the home page */}
+    <a href="http://solscape.games/"> {/* Link to the home page */}
         <img src="./assets/images/SOLSCAPE.png" alt="Logo" />
     </a>
 </div>
@@ -32,7 +32,7 @@ export default function Home() {
         <div className="nav">
             <ul className="nav-list">
                 <li className="nav-item">
-                    <a href="">Home</a>
+                    <a href="http://solscape.games/">Home</a>
                 </li>
                 <li className="nav-item active">
                   <Link href="">Deposit</Link>  
@@ -80,11 +80,11 @@ export default function Home() {
                     <a href="https://solscape.fandom.com/wiki/Deposit">Wiki</a>
                 </li>
                 <li>
-                    <img src="./assets/images/tiktok.png" alt="" style={{width: '20px', height: '28px', objectFit: 'cover'}} />
+                    <img src="./assets/images/Tiktkk.png" alt="" style={{width: '20px', height: '28px', objectFit: 'cover'}} />
                     <a href="https://www.tiktok.com/@solscape">Tiktok</a>
                 </li>
                 <li>
-                    <img src="./assets/images/instagram.png" alt="" style={{width: '20px', height: '28px', objectFit: 'cover'}} />
+                    <img src="./assets/images/instagram.webp" alt="" style={{width: '20px', height: '28px', objectFit: 'cover'}} />
                     <a href="https://www.instagram.com/solscape">Instagram</a>
                 </li>
 
