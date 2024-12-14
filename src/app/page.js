@@ -62,11 +62,11 @@ export default function Home() {
             <ul>
                 <li>
                     <img src="./assets/images/Tg Icon.png" alt="" />
-                    <a href="">Telegram</a>
+                    <a href="https://t.me/solscapesolana">Telegram</a>
                 </li>
                 <li>
                     <img src="./assets/images/X.png" alt="" />
-                    <a href="">X</a>
+                    <a href="https://x.com/i/communities/1867160086180778344">X</a>
                 </li>
                 <li>
                     <img src="./assets/images/Discord.png" alt="" />
@@ -74,8 +74,17 @@ export default function Home() {
                 </li>
                 <li>
                     <img src="./assets/images/Wiki.png" alt="" style={{width: '20px', height: '28px', objectFit: 'cover'}} />
-                    <a href="">Wiki</a>
+                    <a href="https://solscape.fandom.com/wiki/Deposit">Wiki</a>
                 </li>
+                <li>
+                    <img src="./assets/images/tiktok.png" alt="" style={{width: '20px', height: '28px', objectFit: 'cover'}} />
+                    <a href="https://www.tiktok.com/@solscape">Tiktok</a>
+                </li>
+                <li>
+                    <img src="./assets/images/instagram.png" alt="" style={{width: '20px', height: '28px', objectFit: 'cover'}} />
+                    <a href="https://www.instagram.com/solscape">Instagram</a>
+                </li>
+
             </ul>
         </footer>
     </div>

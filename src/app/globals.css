@@ -649,7 +649,6 @@ button {
 
 
 /* ---------Footer--------------- */
-
 .footer {
     width: 500px;
     margin: 25px auto;
@@ -657,12 +656,20 @@ button {
 
     ul {
         display: flex;
-        align-items: center;
+        justify-content: center; /* Horizontally centers all list items */
+        align-items: center; /* Vertically aligns items if needed */
+        padding: 0;
+        margin: 0;
+        list-style: none; /* Removes bullet points */
 
         li {
-            margin-right: 50px;
+            margin-right: 50px; /* Adds space between each item */
             display: flex;
             align-items: center;
+
+            &:last-child {
+                margin-right: 0; /* Removes margin for the last item */
+            }
 
             &:hover {
                 cursor: pointer;
@@ -670,7 +677,7 @@ button {
             }
 
             img {
-                margin-right: 10px;
+                margin-right: 10px; /* Space between image and text */
                 min-width: 28px;
                 height: 28px;
                 object-fit: contain;
@@ -684,6 +691,7 @@ button {
         }
     }
 }
+
 
 /* --------------Responsive-------------- */
 
@@ -952,22 +960,26 @@ button {
     }
 
     .footer {
-        width: 300px;
-
+        width: 100%; /* Make the footer take full width of the screen */
+        padding: 0 15px; /* Add some horizontal padding for spacing */
+    
         ul {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-
+            grid-template-columns: 1fr; /* Stack items vertically */
+            justify-items: center; /* Center items horizontally within the grid */
+    
             li {
-                margin-right: 10px;
-                padding: 10px 0px 10px 30px;
-
+                margin-right: 0; /* Remove right margin for a cleaner layout */
+                padding: 10px 0; /* Add consistent padding for spacing */
+    
                 a {
-                    font-size: 22px;
+                    font-size: 18px; /* Adjust font size for better readability on smaller screens */
+                    text-align: center; /* Center align text inside each link */
                 }
             }
         }
     }
+    
 }
 
 @media (max-width: 480px) {
